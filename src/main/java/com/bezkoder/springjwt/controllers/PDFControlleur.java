@@ -97,14 +97,14 @@ public class PDFControlleur {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
     }
-    @PostMapping("/uploaduser")
-    public imageuser uplaodImages(@RequestParam("imageFile") MultipartFile file) throws IOException {
+    //@PostMapping("/uploaduser")
+   // public imageuser uplaodImages(@RequestParam("imageFile") MultipartFile file) throws IOException {
 
-        System.out.println("Original Image Byte Size - " + file.getBytes().length);
-        imageuser img = new imageuser(file.getOriginalFilename(), file.getContentType(),
-                (file.getBytes()));
-       return  users.save(img);
-    }
+     //return   System.out.println("Original Image Byte Size - " + file.getBytes().length);
+       // imageuser img = new imageuser(file.getOriginalFilename(), file.getContentType(),
+         //       (file.getBytes()));
+        //return  users.save(img);
+    //}
     @GetMapping("/files")
     public List<File> getRanQcm(){
         return pdf.retrieveAllfiles();
@@ -115,7 +115,30 @@ public class PDFControlleur {
         File pdfEntity = pdf.retrieveQcmById(pdfId);
         return pdfEntity.getPic();
     }
+    @PostMapping("/uploadsf")
+    public imageuser uploadImage(@RequestParam("file") MultipartFile file) throws IOException {
 
+            imageuser image = new imageuser();
+            image.setName(file.getOriginalFilename());
+
+            image.setData(file.getBytes());
+
+            return users.save(image);
+
+    }
+
+    @Autowired
+    private PdfService imageService;
+
+    @PostMapping("/uploadd")
+    public ResponseEntity<String> uploadImages(@RequestParam("file") MultipartFile file) {
+        try {
+            imageService.saveImage(file);
+            return ResponseEntity.ok().body("Image uploaded successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload image.");
+        }
+    }
 }
 
 

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -22,7 +23,7 @@ public class Forum implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id ;
    private String contenu;
-   private Date Datapost;
+   private LocalDateTime Datapost;
    @ManyToOne
     private User forum;
 

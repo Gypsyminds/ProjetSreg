@@ -42,4 +42,12 @@ public class PdfService implements IPdf{
         return pdfrep.save(FileDB);
     }
 
+
+    public void saveImage(MultipartFile file) throws IOException {
+        imageuser image = new imageuser();
+        image.setName(file.getOriginalFilename());
+        image.setData(file.getBytes());
+        rep.save(image);
+    }
+
 }

@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +38,7 @@ public class CourControlleur {
     CondidatRepository condidat ;
  ;
     @Autowired
-    IComantairepost iprof ;
+    ForumRepository forumrep;
     @Autowired
     CommentaireformsRepository certifrepo ;
     @Autowired
@@ -89,18 +90,18 @@ public class CourControlleur {
     @GetMapping("/img/{imgId}")
     public byte[] getimgBytes(@PathVariable Long imgId) {
         imageuser pdfEntity = pdf.retrieveById(imgId);
-        return pdfEntity.getPicByte();
+        return pdfEntity.getData();
     }
     @GetMapping("/imgs/{id}")
     public ResponseEntity<byte[]> getImage(@PathVariable Long id) {
         imageuser image = pdf.retrieveById(id);
 
 
-        if (image.getPicByte() != null) {
-            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image.getPicByte());
+        if (image.getData() != null) {
+            return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image.getData());
             // Now you can use picByte without a NullPointerException
         }
-        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image.getPicByte());
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(image.getData());
 
     }
 
@@ -117,13 +118,14 @@ public class CourControlleur {
             return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
         }
     }
-    @GetMapping(path = { "/get/{imageName}" })
-    public imageuser getImages(@PathVariable("imageName") Long  imageName) throws IOException {
-        final Optional<imageuser> retrievedImage = Optional.ofNullable(pdf.retrieveById(imageName));
-        imageuser img = new imageuser(retrievedImage.get().getName(), retrievedImage.get().getType(),
-                decompressBytes(retrievedImage.get().getPicByte()));
-        return img;
-    }
+    //@GetMapping(path = { "/get/{imageName}" })
+   // public imageuser getImages(@PathVariable("imageName") Long  imageName) throws IOException {
+       // final Optional<imageuser> retrievedImage = Optional.ofNullable(pdf.retrieveById(imageName));
+       // imageuser img = new imageuser(retrievedImage.get().getName(),
+     //           decompressBytes(retrievedImage.get().getData()));
+       // return img;
+       // return 1;
+   // }
     // compress the image bytes before storing it in the database
     public static byte[] compressBytes(byte[] data) {
         Deflater deflater = new Deflater();
@@ -159,5 +161,16 @@ public class CourControlleur {
         }
         return outputStream.toByteArray();
     }
+@DeleteMapping(value="/deleteuserbyid/{id}")
+public void Deletbyid (@PathVariable Long id ){
+        userRepository.deleteById(id);
+}
+@DeleteMapping(value="/deletforum24h/{id}")
+ public void deleteSubjectById(@PathVariable Long id) {
+    Forum subject = forumrep.findById(id).orElse(null);
+   // if(LocalDateTime.now().minusSeconds(24L).isBefore(subject.getDatapost()))//pour 24heures
+    if(LocalDateTime.now().minusMinutes(1).isAfter(subject.getDatapost())) //pour tester avec une minute
 
+    forumrep.deleteById(id);
+}
 }
